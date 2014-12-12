@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="renamer/Program.cs">
+    <Files>
+      <File FileName="renamer/Program.cs" Line="19" Column="4" />
+      <File FileName="../../../media/sovushka/9421116c-d0aa-492b-9b9e-716d185d8a14/Archive/linux/C#/trainee/trainee/Main.cs" Line="1" Column="1" />
+      <File FileName="../-training/AssemblyLoad/AssemblyLoad/Program.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

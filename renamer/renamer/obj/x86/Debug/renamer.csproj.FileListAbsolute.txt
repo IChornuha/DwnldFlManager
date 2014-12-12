@@ -1,0 +1,5 @@
+D:\С#\renamer\renamer\bin\Debug\renamer.exe
+D:\С#\renamer\renamer\bin\Debug\renamer.pdb
+D:\С#\renamer\renamer\obj\x86\Debug\renamer.csprojResolveAssemblyReference.cache
+D:\С#\renamer\renamer\obj\x86\Debug\renamer.exe
+D:\С#\renamer\renamer\obj\x86\Debug\renamer.pdb
