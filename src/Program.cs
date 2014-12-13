@@ -35,39 +35,57 @@ namespace renamer
              Console.WriteLine(msgAboutFileListLength);
             int i = 0;
                 foreach (FileInfo f in files){
-                    //if (i % 3 == 0) { Console.Clear(); } //После каждого третьего файла чистим вывод    }
-                Console.WriteLine ("\nСейчас на очереди {0}\nФайл {1}/{2}\nРазмер {3} bite",f.Name, i+1,files.Length, f.Length);
-                i++;
-                CopyFile (f);
+                    Console.WriteLine(f.DirectoryName+"\\"+ f.Name);
+                    if (i % 9 == 0) { Console.Clear(); }
+                    Console.WriteLine("\nсейчас на очереди {0}\nфайл {1}/{2}\nразмер {3} bite", f.Name, i + 1, files.Length, f.Length);
+                    i++;
+                    CopyFile(f);
 
                 }
 		}
         
-		//создаем обьект файла, передаем в поток. Проверяем наличие в директории файла с таким именем
-        //если уже был, удаляем и копируем туда исходный файл. По завершении удаляем исходный файл. 
         private void CopyFile(FileInfo fileToCopy){
             try
             {
             string sPath = string.Format(CreatePath(fileToCopy)+fileToCopy);
             Console.WriteLine(sPath);
             FileInfo tempFile = new FileInfo(sPath);
-            
-                
+                          
                 using (FileStream fs = tempFile.Create()) { }
                 if (File.Exists(sPath))
                 {
                     tempFile.Delete();
                 }
-                fileToCopy.CopyTo(sPath);
-                fileToCopy.Delete();
+
+                fileToCopy.MoveTo(sPath);
                 Console.WriteLine("Файл {0} перемещен в каталог {1}", fileToCopy.Name, tempFile.DirectoryName);
+                WriteToLog(fileToCopy.Name, sPath, fileToCopy.CreationTime);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("\nОшибка:\n{0}", ex);
+                //Console.WriteLine("\nОшибка:\n{0}", ex);
+                WriteToLog(ex.Message);
+                //Дописать вывод информации о ошибках во время исполнения
             }
-           // MainClass.CreateHTMLLog(tempFile.Name, sPath);
 		}
+
+        
+        private void WriteToLog(string fileToLog, string sPath, DateTime creationDate)
+        {
+            using (StreamWriter streamWr = new StreamWriter (Directory.GetCurrentDirectory()+"\\logs.txt", true)) {
+                streamWr.WriteLine("{0} || created {1} => {2}",fileToLog, creationDate, sPath);
+            }
+        }
+
+        private void WriteToLog(string exmsg)
+        {
+            using (StreamWriter streamWr = new StreamWriter(Directory.GetCurrentDirectory() + "\\errors.txt", true))
+            {
+                streamWr.WriteLine("Error!||{0} Text next: \n{1}", DateTime.Now, exmsg);
+            }
+        }
+
+
         //Метод определяет конечное местоположения файла в зависимости от расширения.
         //переписать, использовать .config 
         private string CreatePath(FileInfo file)
@@ -114,24 +132,25 @@ namespace renamer
             }
             return sPath;
         }
+
 	}
             
-     class Rename{
-        private string spath;
-        private string substring;
+//     class Rename{
+//        private string spath;
+//        private string substring;
 
-        public string FilePath { get; set; }
-        public string SubString { get; set; }
+//        public string FilePath { get; set; }
+//        public string SubString { get; set; }
  
-        public Rename(string filepath, string substring)
-        {
-            FilePath = filepath;
-            SubString = substring;
-        }
-        public static void ChangeFileName()
-        {
-            //потом написать
-            //заложить логику проверки на ненулевой размер файла и переименовать. 
-        }
-        }
+//        public Rename(string filepath, string substring)
+//        {
+//            FilePath = filepath;
+//            SubString = substring;
+//        }
+//        public static void ChangeFileName()
+//        {
+//            //потом написать
+//            //заложить логику проверки на ненулевой размер файла и переименовать. 
+//        }
+//        }
 }
