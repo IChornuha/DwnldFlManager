@@ -12,6 +12,9 @@ namespace renamer
 			repl.GetListOfFiles ();
             
             Console.WriteLine("\nРабота программы завершена.");
+            Console.WriteLine("Отчет о работе {0}\\log\\move_log.txt", Directory.GetCurrentDirectory());
+            Console.WriteLine("Отчет о ошибках {0}\\log\\error_log.txt", Directory.GetCurrentDirectory());
+   
             Console.Title = "RePlacer:\tРабота программы завершена";
 
             Console.ReadLine ();
@@ -26,7 +29,6 @@ namespace renamer
 		public Replacer(string directoryPath){
 			dirPath = directoryPath;
 		}
-        //Берем список файлов из указанной папки, передаем на перемещение. Почти бесполезный метод, что ли. 
 		public void GetListOfFiles(){
 			DirectoryInfo dir = new DirectoryInfo(dirPath);
 			FileInfo[] files = dir.GetFiles("*.*",SearchOption.TopDirectoryOnly);
@@ -35,8 +37,8 @@ namespace renamer
              Console.WriteLine(msgAboutFileListLength);
             int i = 0;
                 foreach (FileInfo f in files){
-                    Console.WriteLine(f.DirectoryName+"\\"+ f.Name);
-                    if (i % 9 == 0) { Console.Clear(); }
+                   
+                    if (i % 10 == 0) { Console.Clear(); }
                     Console.WriteLine("\nсейчас на очереди {0}\nфайл {1}/{2}\nразмер {3} bite", f.Name, i + 1, files.Length, f.Length);
                     i++;
                     CopyFile(f);
@@ -45,43 +47,46 @@ namespace renamer
 		}
         
         private void CopyFile(FileInfo fileToCopy){
+
             try
             {
             string sPath = string.Format(CreatePath(fileToCopy)+fileToCopy);
             Console.WriteLine(sPath);
-            FileInfo tempFile = new FileInfo(sPath);
-                          
-                using (FileStream fs = tempFile.Create()) { }
+            FileInfo tempFile = new FileInfo(sPath);   
+                                    
                 if (File.Exists(sPath))
                 {
                     tempFile.Delete();
                 }
 
                 fileToCopy.MoveTo(sPath);
+
                 Console.WriteLine("Файл {0} перемещен в каталог {1}", fileToCopy.Name, tempFile.DirectoryName);
-                WriteToLog(fileToCopy.Name, sPath, fileToCopy.CreationTime);
+                WriteToLog(fileToCopy.Name, fileToCopy.DirectoryName, fileToCopy.CreationTime, "Ok");
             }
             catch (Exception ex)
             {
-                //Console.WriteLine("\nОшибка:\n{0}", ex);
-                WriteToLog(ex.Message);
-                //Дописать вывод информации о ошибках во время исполнения
+                WriteToLog(ex);
+                WriteToLog(fileToCopy.Name, fileToCopy.DirectoryName, fileToCopy.CreationTime, "Error");
+                Console.WriteLine("При обработке файла возникла ошибка. \nСм. {0}\\log\\error_log.txt", Directory.GetCurrentDirectory());
+              
             }
 		}
 
         
-        private void WriteToLog(string fileToLog, string sPath, DateTime creationDate)
+        private void WriteToLog(string fileToLog, string sPath, DateTime creationDate, string msg)
         {
-            using (StreamWriter streamWr = new StreamWriter (Directory.GetCurrentDirectory()+"\\logs.txt", true)) {
-                streamWr.WriteLine("{0} || created {1} => {2}",fileToLog, creationDate, sPath);
+            using (StreamWriter streamWr = new StreamWriter(Directory.GetCurrentDirectory()+"\\log\\move_logs.txt", true))
+            {
+                streamWr.WriteLine("Result:\t{0} || {1}|| created {2}, moved to {3}", msg, fileToLog, creationDate, sPath);
             }
         }
 
-        private void WriteToLog(string exmsg)
+        private void WriteToLog(Exception e)
         {
-            using (StreamWriter streamWr = new StreamWriter(Directory.GetCurrentDirectory() + "\\errors.txt", true))
+            using (StreamWriter streamWr = new StreamWriter(Directory.GetCurrentDirectory()+"\\log\\error_log.txt", true))
             {
-                streamWr.WriteLine("Error!||{0} Text next: \n{1}", DateTime.Now, exmsg);
+                streamWr.WriteLine("{0} \nMessage: \n\t{1}\nStackTrace:\n{2}\nMethod:\n\t{3}\n------------------", DateTime.Now, e.Message, e.StackTrace, e.TargetSite);
             }
         }
 
