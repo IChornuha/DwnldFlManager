@@ -1,0 +1,2 @@
+Result:	Error || AlbumArt_{3CD5F11A-70AD-4D73-B047-140797095865}_Large.jpg|| created 25.11.2014 23:19:48, moved to D:\Загрузки
+Result:	Error || AlbumArt_{3CD5F11A-70AD-4D73-B047-140797095865}_Small.jpg|| created 25.11.2014 23:19:48, moved to D:\Загрузки
