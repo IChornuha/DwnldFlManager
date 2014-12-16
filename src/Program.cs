@@ -1,16 +1,19 @@
 using System;
 using System.IO;
+using System.Configuration;
 
 namespace renamer
 {
-	static class MainClass
+    static class MainClass
 	{
+       
 		public static void Main (string[] args)
 		{
+            
             Replacer repl = new Replacer(@"D:\Загрузки");
             Console.WriteLine("Начинаем работу\n");
 			repl.GetListOfFiles ();
-            
+
             Console.WriteLine("\nРабота программы завершена.");
             Console.WriteLine("Отчет о работе {0}\\log\\move_log.txt", Directory.GetCurrentDirectory());
             Console.WriteLine("Отчет о ошибках {0}\\log\\error_log.txt", Directory.GetCurrentDirectory());
@@ -41,12 +44,11 @@ namespace renamer
                     if (i % 10 == 0) { Console.Clear(); }
                     Console.WriteLine("\nсейчас на очереди {0}\nфайл {1}/{2}\nразмер {3} bite", f.Name, i + 1, files.Length, f.Length);
                     i++;
-                    CopyFile(f);
-
+                    Move(f);
                 }
 		}
         
-        private void CopyFile(FileInfo fileToCopy){
+        private void Move(FileInfo fileToCopy){
 
             try
             {
@@ -74,7 +76,7 @@ namespace renamer
 		}
 
         
-        private void WriteToLog(string fileToLog, string sPath, DateTime creationDate, string msg)
+        public static void WriteToLog(string fileToLog, string sPath, DateTime creationDate, string msg)
         {
             using (StreamWriter streamWr = new StreamWriter(Directory.GetCurrentDirectory()+"\\log\\move_logs.txt", true))
             {
@@ -82,7 +84,7 @@ namespace renamer
             }
         }
 
-        private void WriteToLog(Exception e)
+        public static void WriteToLog(Exception e)
         {
             using (StreamWriter streamWr = new StreamWriter(Directory.GetCurrentDirectory()+"\\log\\error_log.txt", true))
             {
@@ -91,50 +93,19 @@ namespace renamer
         }
 
 
-        //Метод определяет конечное местоположения файла в зависимости от расширения.
-        //переписать, использовать .config 
+
         private string CreatePath(FileInfo file)
         {
-            string ext = file.Extension;
             string sPath = null;
-            switch (ext)
+
+            try
             {
-                case ".pdf":
-                case ".djvu":
-                    sPath = @"D:\Документы\Books\";
-                    break;
-                case ".jpg":
-                case ".jpeg":
-                case ".png":
-                case ".gif":
-                    sPath = @"D:\Изображения\";
-                    break;
-                case ".zip":
-                case ".7z":
-                case ".tar":
-                case ".rar":
-                    sPath = @"D:\DownloadArc\";
-                    break;
-                case ".doc":
-                case ".docx":
-                case ".rtf":
-                case ".ppt":
-                case ".pptx":
-                case ".xls":
-                case ".xlsx":
-                    sPath = @"C:\Users\Sovushka\Documents\";
-                    break;
-                case ".mp3":
-                    sPath = @"C:\Users\Public\Music\";
-                    break;
-                case ".exe":
-                case ".msi":
-                    sPath = @"D:\Pipe\exe\";
-                    break;
-                default:
-                    sPath = @"D:\Pipe\";
-                    break;
+                sPath = ConfigurationManager.AppSettings[file.Extension];              
             }
+            catch (InvalidOperationException ex)
+            {
+                Replacer.WriteToLog(ex);
+            } 
             return sPath;
         }
 
