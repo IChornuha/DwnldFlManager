@@ -53,7 +53,8 @@ namespace renamer
             try
             {
             string sPath = string.Format(CreatePath(fileToCopy)+fileToCopy);
-            Console.WriteLine(sPath);
+           Console.WriteLine(sPath);
+
             FileInfo tempFile = new FileInfo(sPath);   
                                     
                 if (File.Exists(sPath))
@@ -93,6 +94,10 @@ namespace renamer
         }
 
 
+        //построение пути к файлу, основываясь на его типе. 
+        //Используем конфиг
+        //TODO
+        //Протестировать и исключить вылеты
 
         private string CreatePath(FileInfo file)
         {
@@ -105,28 +110,13 @@ namespace renamer
             catch (InvalidOperationException ex)
             {
                 Replacer.WriteToLog(ex);
-            } 
-            return sPath;
+            }
+            if (sPath == null)
+            {
+                sPath = ConfigurationManager.AppSettings["default"];
+
+            } return sPath;
         }
 
 	}
-            
-//     class Rename{
-//        private string spath;
-//        private string substring;
-
-//        public string FilePath { get; set; }
-//        public string SubString { get; set; }
- 
-//        public Rename(string filepath, string substring)
-//        {
-//            FilePath = filepath;
-//            SubString = substring;
-//        }
-//        public static void ChangeFileName()
-//        {
-//            //потом написать
-//            //заложить логику проверки на ненулевой размер файла и переименовать. 
-//        }
-//        }
 }
